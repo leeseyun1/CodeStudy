@@ -1,0 +1,172 @@
+.content > table {
+    width:100%;
+    border-top: #696969 solid 1.5px;
+}
+
+.content > table > tbody > tr > th , .content > table > tbody > tr > td {
+    border:0.5px solid #a6a5a5;
+}
+
+table > tbody > tr > td > span{
+    border-radius: 100%;
+    overflow:hidden;
+    width:40px;
+    aspect-ratio: 1/1;
+    float:left;
+}
+
+table > tbody > tr > td > span > img {
+    height:100%;
+    weight:100%;
+    object-fit:cover;
+}
+
+table > tbody > tr > th {
+    padding:18px;
+    background: #f7f9fc;
+    color: #333;
+    box-sizing:border-box;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+table > tbody > tr > td{
+    padding:7px;
+}
+
+#user {
+    float:left;
+    margin-left:2%;
+    width:85%;
+}
+
+input[type="text"] {
+    width:100%;
+    height:40px;
+    border-radius:0;
+    outline:none;
+    border: solid 1px #ddd;
+    box-sizing: border-box;
+}
+
+div.button-set {
+    width:100%;
+    height:auto;
+    margin-top : 20px;
+    text-align: right;
+}
+
+div.button-set > button {
+    padding:7px;
+    font-size:16px;
+    font-weight: 500;
+}
+
+
+
+div.comment-write {
+    margin-top:30px;
+}
+
+div.comment-write , fieldset, legend{
+    width:100%;
+}
+
+
+textarea {
+    width:100% !important;
+    resize:none;
+    border-radius: 0;
+    height:80px;
+    outline:none;
+    border:solid 1px #ddd;
+    font-size:15px;
+    box-sizing: border-box;
+}
+
+fieldset > legend {
+    border:solid 1px #ddd;
+
+}
+
+fieldset > legend> div>span>button{
+    padding:7px 12px;
+    font-size:16px;
+    font-weight: 500;
+    float:right;
+    background: #b5cdec;
+    border: solid 1px #ddd;
+}
+
+fieldset > legend {
+    background:#f7f9fc;
+}
+
+div.comment-list {
+    margin-top : 36px;
+}
+
+div.comment-list > div {
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    overflow:auto;
+    padding:10px;
+}
+
+div.comment-list > div > div {
+    overflow:auto;
+    width:100%;
+}
+
+div.comment-list > div > div > .writer-info{
+    margin-left : 10px;
+    vertical-align: middle;
+    font-size: 15px;
+    font-weight: 600;
+    overflow:auto;
+}
+
+div.comment-list > div > div > .profile-box{
+    border-radius: 100%;
+    overflow:hidden;
+    width:35px;
+    aspect-ratio: 1/1;
+    float:left;
+}
+
+div.comment-list > div > div > .profile-box > img{
+    height:100%;
+    object-fit:cover;
+    width:100%;
+}
+
+div.comment-list > div > div > button {
+    float:right;
+}
+
+div.comment-list > div > div.comment-content {
+    margin-top:10px;
+    height:auto;
+    overflow-y:hidden;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+
+.paging * {box-sizing:border-box;}
+.paging {text-align:center; margin:2% 0 0;}
+.paging > p {display:inline-block; margin:0 4px;}
+.paging > p > a, .paging > p > span {margin-left:-1px;}
+.paging > p > a:first-child, .paging > p > span:first-child {margin-left:0;}
+.paging a, .paging span {display:inline-block; width:30px; height:30px; line-height:240%; color:#999; font-size:12px;}
+.paging a:hover {background:#f7f7f7;}
+.paging a.on, .paging span.on {background:#666; border-color:transparent; border-radius:4px; color:#fff;}
+.paging .page_bt {
+
+position:relative;}
+.paging .page_bt::after {background-position:-30px 0; width:6px; height:11px; position:absolute; top:50%; left:50%; margin:-5px 0 0 -3px;}
+.paging .first::after {background-position:-15px 0; width:12px; margin-left:-6px;}
+.paging .next::after {background-position:-40px 0;}
+.paging .last::after {background-position:-49px 0; width:12px; margin-left:-6px;}
+.paging .prev, .paging .last {margin-left:-1px;}
+

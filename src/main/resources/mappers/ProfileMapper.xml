@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seyun.CodeStudy.mapper.ProfileMapper">
+    <insert id="create" parameterType="com.seyun.CodeStudy.model.member.Profile">
+        INSERT INTO tb_profile (
+            profile_id
+            , id
+            , pr_upload_path
+            , pr_original_name
+            , pr_save_name
+            , pr_size
+            , pr_is_deleted
+            , pr_created_date
+            , pr_deleted_date
+        ) VALUES (
+            #{profileId}
+            , #{id}
+            , #{uploadPath}
+            , #{originalName}
+            , #{saveName}
+            , #{size}
+            , 0
+            , NOW()
+            , NULL
+        )
+    </insert>
+
+    <delete id="deleteByProfileId" parameterType="long">
+        UPDATE
+            tb_profile
+        SET
+            pr_is_deleted = 1
+            , pr_deleted_date = NOW()
+        WHERE
+            profile_id = #{profileId}
+    </delete>
+</mapper>

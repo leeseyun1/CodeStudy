@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<th:block layout:fragment="title">
+    <title>CodeStudy</title>
+</th:block>
+<th:block layout:fragment="add-css">
+    <link rel="stylesheet" th:href="@{/css/lecture/list.css}">
+</th:block>
+
+<th:block layout:fragment="content">
+    <div class="content-top">
+        <h2>강의 목록</h2>
+    </div>
+    <div class="content">
+        <div class="search-box">
+            <form id="searchForm">
+                <div class="search-group">
+                    <select id="searchType" name="searchType">
+                        <option value="">전체 검색</option>
+                        <option value="writerName">이름</option>
+                        <option value="writerId">아이디</option>
+                        <option value="title">제목</option>
+                        <option value="tagContent">태그</option>
+                    </select>
+                    <input type="text" id="keyword" name="keyword" placeholder="검색어를 입력해 주세요."/>
+                    <button type="button" class="search-btn" onclick="movePage(1);">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </div>
+                <div class="search-order">
+                    <select id="order" name="order">
+                        <option value="lectureId">최근 개설 순</option>
+                        <option value="viewCnt">조회수 순</option>
+                        <option value="uploadDate">업로드 순</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+        <ul id="lecture-list" class="lecture-list">
+
+        </ul>
+        <div class="button-set">
+            <button onclick="location.href='/lecture/write'" class="goWriteLecture">강의 생성</button>
+        </div>
+    </div>
+    <div class="paging">
+
+    </div>
+</th:block>
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+            window.onload = () => {
+                setQueryStringParams();
+                findAllLecture();
+
+            }
+
+            function setQueryStringParams(){
+                if( !location.search ){
+                    return false;
+                }
+
+                const form = document.getElementById('searchForm');
+
+                new URLSearchParams(location.search).forEach((value, key) => {
+                    if(form[key]){
+                        form[key].value = value;
+                    }
+                })
+            }
+
+            function findAllLecture(){
+                const list = [[ ${lectures.list} ]];
+
+                if( !list.length ){
+                    document.getElementById('lecture-list').innerHTML = '<div class="no-data">검색된 결과가 없습니다.</div>';
+                    drawPage();
+                }
+
+                const pagination = [[ ${lectures.pagination} ]];
+
+                const params = [[ ${params} ]];
+                console.log(params);
+                console.log(list);
+
+                let num = pagination.totalRecordCount - ((params.page - 1) * params.recordSize);
+
+                drawList(list, num);
+                drawPage(pagination, params);
+            }
+
+            function goViewPage(lectureId){
+                const queryString = (location.search) ? location.search + `&lectureId=${lectureId}` : `?lectureId=${lectureId}`;
+                location.href = '/lecture/view' + queryString;
+            }
+
+            function drawList(list, num){
+                let html = '';
+
+                list.forEach(lecture => {
+                    html += `
+                        <li class="lecture" onclick="goViewPage(${lecture.lectureId});">
+                            <div class="thumbnail-box">
+                    `;
+                    if(lecture.thumbnail.originalName != null){
+                        html += `
+                            <img src="/upload/${lecture.thumbnail.uploadPath}/${lecture.thumbnail.saveName}">
+                        `;
+                    }else{
+                        html += `
+                            <img src="../img/noimg.gif">
+                        `;
+                    }
+                    html += `
+                            </div>
+                            <div class="lecture-info">
+                                <div class="profile-box">
+                    `;
+                    if(lecture.profile == null || lecture.profile.uploadPath == null){
+                        html += `
+                            <img src="/img/default-profile.svg">
+                        `;
+                    }else{
+                        html += `
+                            <img src="/upload/${lecture.profile.uploadPath}/${lecture.profile.saveName}">
+                        `;
+                    }
+                    html += `
+                                </div>
+                                <div class="user-info">${lecture.writerName}(${lecture.writerId})</div>
+                            </div>
+                            <div class="lecture-title">${lecture.title}</div>
+                            <div class="tag-list">
+                    `;
+                    if(lecture.tagList != null){
+                        lecture.tagList.forEach(tags => {
+                            html += `
+                                <a class="tag"
+                                href="/lecture/list?searchType=tagContent&keyword=${tags.tagContent}">${tags.tagContent}</a>
+                            `;
+                        })
+                    }
+                    html += `
+                            </div>
+                        </li>
+                    `;
+                })
+
+                $('#lecture-list').html(html);
+            }
+
+            function drawPage(pagination, params){
+                if( !pagination || !params ){
+                    document.querySelector('.paging').innerHTML = '';
+                    throw new Error('Missing required parameters...');
+                }
+
+                let html = '';
+
+                if(pagination.existPrevPage){
+                    html += `
+                        <a href="javascript:void(0);" onclick="movePage(1)" class="page_bt first">&laquo;</a>
+                        <a href="javascript:void(0);" onclick="movePage(${pagination.startPage - 1})" class="page_bt prev">&lsaquo;</a>
+                    `;
+                }
+
+                html += '<p>';
+                for(let i = pagination.startPage; i <= pagination.endPage; i++){
+                    html += (i !== params.page)
+                        ? `<a href="javascript:void(0);" onclick="movePage(${i});">${i}</a>`
+                        : `<span class="on">${i}</span>`
+                }
+                html += '</p>';
+
+                if(pagination.existNextPage){
+                    html += `
+                        <a href="javascript:void(0);" onclick="movePage(${pagination.endPage + 1});" class="page_bt next">&rsaquo;</a>
+                        <a href="javascript:void(0);" onclick="movePage(${pagination.totalPageCount});" class="page_bt last">&raquo;</a>
+                    `;
+                }
+
+                document.querySelector('.paging').innerHTML = html;
+            }
+
+            function movePage(page){
+                const form = document.getElementById('searchForm');
+
+                const queryParams = {
+                    page : (page) ? page : 1,
+                    recordSize : 9,
+                    pageSize : 5,
+                    searchType : searchType.value,
+                    keyword : keyword.value,
+                    order : order.value
+                }
+
+                location.href = location.pathname + '?' + new URLSearchParams(queryParams).toString();
+            }
+        /*]]>*/
+    </script>
+</th:block>
+</html>

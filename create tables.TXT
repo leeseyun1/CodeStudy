@@ -1,0 +1,122 @@
+CREATE TABLE `tb_member` (
+  `id` varchar(20) NOT NULL,
+  `password` varchar(100) NOT NULL,
+  `name` varchar(20) NOT NULL,
+  `gender` enum('M','F') NOT NULL,
+  `birthday` date NOT NULL,
+  `is_deleted` tinyint NOT NULL DEFAULT '0',
+  `created_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `tb_auth` (
+  `id` varchar(20) NOT NULL,
+  `auth` varchar(45) NOT NULL,
+  KEY `fk_member_id_idx` (`id`),
+  CONSTRAINT `fk_member_id` FOREIGN KEY (`id`) REFERENCES `tb_member` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `tb_profile` (
+  `profile_id` int NOT NULL AUTO_INCREMENT,
+  `id` varchar(20) NOT NULL,
+  `pr_upload_path` varchar(100) NOT NULL,
+  `pr_original_name` varchar(255) NOT NULL,
+  `pr_save_name` varchar(45) NOT NULL,
+  `pr_size` int NOT NULL,
+  `pr_is_deleted` tinyint NOT NULL DEFAULT '0',
+  `pr_created_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `pr_deleted_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`profile_id`),
+  KEY `fk_profile_member_id_idx` (`id`),
+  CONSTRAINT `fk_profile_member_id` FOREIGN KEY (`id`) REFERENCES `tb_member` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `tb_lecture` (
+  `lecture_id` bigint NOT NULL AUTO_INCREMENT,
+  `writer_id` varchar(20) NOT NULL,
+  `writer_name` varchar(45) NOT NULL,
+  `title` varchar(50) NOT NULL,
+  `intro` varchar(200) NOT NULL,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT '0',
+  `view_cnt` int NOT NULL DEFAULT '0',
+  `created_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_date` datetime DEFAULT NULL,
+  `upload_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`lecture_id`),
+  KEY `fk_lecture_member_id_idx` (`writer_id`),
+  CONSTRAINT `fk_lecture_member_id` FOREIGN KEY (`writer_id`) REFERENCES `tb_member` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `tb_thumbnail` (
+  `thumbnail_id` bigint NOT NULL AUTO_INCREMENT,
+  `lecture_id` bigint NOT NULL,
+  `upload_path` varchar(100) NOT NULL,
+  `original_name` varchar(255) NOT NULL,
+  `save_name` varchar(45) NOT NULL,
+  `size` int NOT NULL,
+  `is_deleted` tinyint NOT NULL DEFAULT '0',
+  `created_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `deleted_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`thumbnail_id`),
+  KEY `fk_thumbnail_lecture_id_idx` (`lecture_id`),
+  CONSTRAINT `fk_thumbnail_lecture_id` FOREIGN KEY (`lecture_id`) REFERENCES `tb_lecture` (`lecture_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `tb_tagmap` (
+  `map_id` bigint NOT NULL AUTO_INCREMENT,
+  `tag_id` bigint NOT NULL,
+  `lecture_id` bigint NOT NULL,
+  PRIMARY KEY (`map_id`),
+  KEY `fk_tagId_idx` (`tag_id`),
+  KEY `fk_lectureId_idx` (`lecture_id`),
+  CONSTRAINT `fk_lectureId` FOREIGN KEY (`lecture_id`) REFERENCES `tb_lecture` (`lecture_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_tagId` FOREIGN KEY (`tag_id`) REFERENCES `tb_tag` (`tag_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=536 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `tb_tag` (
+  `tag_id` bigint NOT NULL AUTO_INCREMENT,
+  `tag_content` varchar(45) NOT NULL,
+  `tag_count` int NOT NULL DEFAULT '0',
+  PRIMARY KEY (`tag_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `tb_video` (
+  `video_id` bigint NOT NULL AUTO_INCREMENT,
+  `lecture_id` bigint NOT NULL,
+  `title` varchar(100) NOT NULL,
+  `upload_path` varchar(100) NOT NULL,
+  `original_name` varchar(255) NOT NULL,
+  `save_name` varchar(45) NOT NULL,
+  `size` int NOT NULL,
+  `is_deleted` tinyint NOT NULL DEFAULT '0',
+  `created_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `deleted_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`video_id`),
+  KEY `fk_lecturevideo_lecture_id_idx` (`lecture_id`),
+  CONSTRAINT `fk_lecturevideo_lecture_id` FOREIGN KEY (`lecture_id`) REFERENCES `tb_lecture` (`lecture_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `tb_post` (
+  `post_id` bigint NOT NULL AUTO_INCREMENT,
+  `writer_id` varchar(20) NOT NULL,
+  `writer_name` varchar(45) NOT NULL,
+  `title` varchar(100) NOT NULL,
+  `content` text NOT NULL,
+  `view_cnt` int NOT NULL DEFAULT '0',
+  `is_deleted` tinyint NOT NULL DEFAULT '0',
+  `created_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`post_id`),
+  KEY `fk_post_member_id_idx` (`writer_id`),
+  CONSTRAINT `fk_post_member_id` FOREIGN KEY (`writer_id`) REFERENCES `tb_member` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `tb_comment` (
+  `comment_id` bigint NOT NULL AUTO_INCREMENT,
+  `post_id` bigint NOT NULL,
+  `writer_id` varchar(45) NOT NULL,
+  `writer_name` varchar(45) NOT NULL,
+  `content` varchar(300) NOT NULL,
+  `is_deleted` tinyint NOT NULL DEFAULT '0',
+  `created_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`comment_id`),
+  KEY `fk_comment_post_id_idx` (`post_id`),
+  KEY `fk_comment_member_id_idx` (`writer_id`),
+  CONSTRAINT `fk_comment_member_id` FOREIGN KEY (`writer_id`) REFERENCES `tb_member` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_comment_post_id` FOREIGN KEY (`post_id`) REFERENCES `tb_post` (`post_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

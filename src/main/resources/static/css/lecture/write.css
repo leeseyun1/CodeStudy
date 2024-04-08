@@ -1,0 +1,223 @@
+.content > form {
+    width:100%;
+    height:auto;
+}
+
+.content > form > table {
+    width:100%;
+    height:500px;
+}
+
+.content > form > table > thead > tr > th, .content > form > table > tbody > tr > td{
+    border:0.5px solid #b0b0b0;
+}
+
+thead > tr > th {
+    background:#6f8294;
+    color:#fff;
+    font-weight: 600;
+    font-size: 15px;
+    height:55px;
+    box-sizing: border-box;
+}
+
+tbody > tr > td.row-head {
+    padding:14px;
+    background: #f6f7f8;
+    vertical-align: top;
+    box-sizing:border-box;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+input[type="text"] {
+    width:100%;
+    height:40px;
+    border-radius:0;
+    outline:none;
+    border: solid 1px #ddd;
+    box-sizing: border-box;
+}
+
+textarea {
+    width:100% !important;
+    height: 100%!important;
+    resize:none;
+    border-radius: 0;
+    outline:none;
+    border:solid 1px #ddd;
+    font-size:15px;
+    box-sizing: border-box;
+}
+
+tbody > tr > td {
+    padding: 5px 12px;
+}
+
+.custom-td {
+    vertical-align: top;
+}
+
+.tag-list {
+    height:24px;
+    width:100%;
+    padding:0 10px 10px 10px;
+    overflow:hidden;
+}
+
+.tag-list > .tag {
+    float :left;
+    margin: 3px;
+    font-weight: 500;
+    background: #bdccdc;
+    border-radius: 4px;
+    padding:4px;
+}
+
+.tag-list > .tag > span {
+    margin-left:6px;
+}
+
+
+.lecture-preview {
+    width:66%;
+    border-radius:10px;
+    height:auto;
+    background:#fefeff;
+    border:1px solid #cfcfcf;
+    box-sizing: border-box;
+    overflow:hidden;
+    margin:0 auto;
+}
+
+.lecture-preview > .thumbnail-box {
+    aspect-ratio: 16/9;
+    width:100%;
+    overflow:hidden;
+    margin:0 auto;
+}
+
+.lecture-preview > .thumbnail-box  > img {
+    height:100%;
+    width:100%;
+    object-fit: cover;
+}
+
+.lecture-info {
+    padding:10px;
+    box-sizing: border-box;
+    display:flex;
+}
+
+.lecture-info > .profile-box {
+    border-radius: 100%;
+    overflow:hidden;
+    width:15%;
+    aspect-ratio: 1/1;
+    float:left;
+}
+
+.lecture-info > .profile-box > img{
+    height:100%;
+    width:100%;
+    object-fit: cover;
+}
+
+.lecture-info > .user-info {
+    margin-left:10px;
+    float:left;
+    font-size: 15px;
+    font-weight: 600;
+    width:85%;
+    display : flex;
+    align-items: center;
+    overflow:hidden;
+}
+
+div.lecture-title {
+    display:flex;
+    padding:5px 10px;
+    font-weight:600;
+    font-size:18px;
+    height:44px;
+    word-break: break-all;
+    overflow:hidden;
+    box-sizing: border-box;
+}
+
+#tagList {
+    width:100%;
+    height:80px;
+}
+
+#tagList > .tag {
+    float :left;
+    margin: 3px;
+    font-weight: 500;
+    background: #bdccdc;
+    border-radius: 4px;
+    padding:4px;
+}
+
+div.button-set {
+    width:100%;
+    height:auto;
+    margin-top : 20px;
+    text-align: right;
+
+}
+
+div.button-set > button {
+    padding:7px;
+    font-size:16px;
+    font-weight: 500;
+}
+
+div.button-set > button.confirm-btn {
+    padding:10px;
+    background:#78899b;
+    color:#fff;
+    border: 1px solid #525d67;
+}
+
+div.button-set > a.cancel-btn {
+    padding:10px;
+    background:#f4f4f4;
+    color:#434b53;
+    border: 1px solid #434b53;
+}
+
+a.cancel-thumbnail {
+    border: 1px solid #434b53;
+    background:#78899b;
+    font-size:14px;
+    padding:3px;
+    color:#fff;
+}
+
+
+#thumbnailInput{
+    display : none;
+}
+
+label {
+    height:24px;
+    padding:7px 3px;
+    float: left;
+    background:#78899b;
+    color:#fff;
+    border: 1px solid #525d67;
+}
+#originalName {
+    margin-left:4px;
+    float:left;
+    width:60%;
+}
+a.cancel-thumbnail {
+    margin-left: 4px;
+    padding:7px 3px;
+    float: left;
+    background:#f4f4f4;
+    color:#434b53;
+    border: 1px solid #434b53;
+}

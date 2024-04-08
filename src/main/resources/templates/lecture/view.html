@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout/layout}">
+<th:block layout:fragment="title">
+    <title>CodeStudy</title>
+</th:block>
+<th:block layout:fragment="add-css">
+    <link rel="stylesheet" th:href="@{/css/lecture/view.css}">
+</th:block>
+
+<th:block layout:fragment="content">
+
+    <div class="content-top">
+        <h2>강의 보기</h2>
+    </div>
+    <div class="content">
+        <video id="video" src="" controls></video>
+        <div class="button-set" sec:authorize="isAuthenticated()"
+             th:if="${member.id == lecture.writerId}" >
+            <button id="modalOpenBtn">강의 업로드</button>
+            <button onclick="goWritePage();">강의 수정</button>
+            <button onclick="deleteLecture();">강의 삭제</button>
+
+        </div>
+        <div class="info">
+            <div class="writer-info">
+                <div class="profile-box">
+                    <img th:if="${lecture.profile == null}" th:src="@{/img/default-profile.svg}">
+                    <img th:if="${lecture.profile != null}" th:src="'/upload/'+${lecture.profile.uploadPath}+'/'+${lecture.profile.saveName}">
+                </div>
+                <div class="writer">
+                    [[ ${lecture.writerName} ]]([[ ${lecture.writerId} ]])
+                </div>
+            </div>
+            <div class="titles">
+                <div class="lecture-title">[[ ${lecture.title} ]]</div>
+                <div class="lecture-post-title" id="videoTitle"></div>
+                <div class="lecture-tag-list">
+                    <a type="button" class="tag" th:if="${lecture.tagList != null}" th:each="tags : ${lecture.tagList}"
+                       th:href="@{/lecture/list(searchType=tagContent, keyword=${tags.tagContent})}">[[ ${tags.tagContent} ]]</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="lecture-list">
+
+        </div>
+
+        <div class="paging">
+
+        </div>
+    </div>
+    <!-- 모달 -->
+    <div id="modalContainer" class="hidden">
+        <div id="modalContent">
+            <div class="modalHeader">
+                <h2>강의 등록</h2>
+            </div>
+            <form method="post" action="/video/upload" enctype="multipart/form-data">
+                <div class="modalBody">
+                    <table>
+                        <colgroup>
+                            <col style="width:30%;"/><col style="width:70%"/>
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <th>작성자</th>
+                            <td>[[ ${lecture.writerId} ]]</td>
+                        </tr>
+                        <tr>
+                            <th>제목</th>
+                            <td><input type="text" name="title" placeholder="제목을 입력해 주세요."></td>
+                        </tr>
+                        <tr>
+                            <th>영상 첨부</th>
+                            <td><input type="file" name="multipartFile" accept="video/mp4,video/mkv, video/x-m4v,video/*"></td>
+                        </tr>
+                        </tbody>
+                        <input type="hidden" name="lectureId" th:value="${lecture.lectureId}">
+                    </table>
+                </div>
+                <div class="modalFooter">
+                    <button type="button" id="modalCloseBtn">닫기</button>
+                    <button type="submit" id="registerBtn">등록</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</th:block>
+
+<th:block layout:fragment="script">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.10/dayjs.min.js" integrity="sha512-FwNWaxyfy2XlEINoSnZh1JQ5TRRtGow0D6XcmAWmYCRgvqOUTnzCxPc9uF35u5ZEpirk1uhlPVA19tflhvnW1g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script th:src="@{/js/function.js}"></script>
+    <script th:inline="javascript">
+
+        window.onload = () => {
+            findAllVideo();
+            init();
+        }
+        const lectureId = [[ ${lecture.lectureId} ]];
+        const lecture = [[ ${lecture} ]];
+        const loginMember = [[ ${member} ]];
+        console.log(loginMember);
+        const modalOpenBtn = document.getElementById('modalOpenBtn');
+        const modalCloseBtn = document.getElementById('modalCloseBtn');
+        const modal = document.getElementById('modalContainer');
+
+        modalOpenBtn.addEventListener('click', () => {
+            modal.classList.remove('hidden');
+        });
+
+        modalCloseBtn.addEventListener('click', () => {
+            modal.classList.add('hidden');
+        });
+
+        function findAllVideo(page){
+            const uriPage = new URLSearchParams(location.search).get('page');
+            page = (page) ? page : (uriPage ? Number(uriPage) : 1);
+
+
+            console.log(lecture);
+            const uri = `/video/list/${lectureId}`;
+            const params = {
+                page : page,
+                recordSize : 9,
+                pageSize : 5,
+                lectureId : lectureId
+            }
+
+            const response = getJson(uri, params);
+            const pagination = response.pagination;
+            drawVideoList(response.list);
+            drawPage(pagination, page);
+        }
+
+        function drawVideoList(list){
+            if(!list.length){
+                return;
+            }
+            let html = '';
+
+            list.forEach(video => {
+                html += `
+                    <div class="lecture" onclick="changeVideo(${video.videoId});">
+                        <div class="lecture-top">
+                            <div class="lecture-top-right">
+                                <p>${dayjs(video.createdDate).format('YYYY-MM-DD HH:mm')}</p>
+                `;
+                if( loginMember != null && lecture.writerId == loginMember.id ){
+                    html += `
+                                <button onclick="deleteVideo(${video.videoId});">삭제</button>
+                    `;
+                }
+                html += `
+                            </div>
+                        </div>
+                        <div class="lecture-body">
+                            ${video.title}
+                        </div>
+                    </div>
+                `;
+            })
+            document.querySelector('.lecture-list').innerHTML = html;
+        }
+
+        function drawPage(pagination, page){
+            if( !pagination || !page ){
+                document.querySelector('.paging').innerHTML = '';
+                throw new Error('Missing required parameters...');
+            }
+
+            let html = '';
+
+            if(pagination.existPrevPage){
+                html += `
+                    <a href="javascript:void(0);" onclick="findAllVideo(1)" class="page_bt first">&laquo;</a>
+                    <a href="javascript:void(0);" onclick="findAllVideo(${pagination.startPage - 1})" class="page_bt prev">&lsaquo;</a>
+                `;
+            }
+
+            html += '<p>';
+            for(let i = pagination.startPage; i <= pagination.endPage; i++){
+                html += `<a href="javascript:void(0);" onclick="findAllVideo(${i});">${i}</a>`
+            }
+            html += '</p>';
+
+            if(pagination.existNextPage){
+                html += `
+                    <a href="javascript:void(0);" onclick="findAllVideo(${pagination.endPage + 1});" class="page_bt next">&rsaquo;</a>
+                    <a href="javascript:void(0);" onclick="findAllVideo(${pagination.totalPageCount});" class="page_bt last">&raquo;</a>
+                `;
+            }
+
+            const paging = document.querySelector('.paging');
+            paging.innerHTML = html;
+
+            const currentPage = Array.from(paging.querySelectorAll('a')).find(a => (Number(a.text) === page || Number(a.text) === pagination.totalPageCount));
+            currentPage.classList.add('on');
+            currentPage.removeAttribute('onclick');
+
+            const lectureId = new URLSearchParams(location.search).get('lectureId');
+            history.replaceState(null, '', location.pathname + `?lectureId=${lectureId}&page=${currentPage.text}`);
+        }
+
+        function changeVideo(id){
+            //정보 변경
+            const uri = `/video/one/${id}`;
+            const params = {
+               videoId : id
+            }
+            const response = getJson(uri, params);
+            $("#videoTitle").html(response.title);
+
+            //비디오 변경
+            var src = '/video/play/'+id;
+            $("#video").attr("src", src);
+
+        }
+
+        //최근 비디오
+        function init(){
+            const lecture = [[ ${lecture} ]];
+            const uri = `/video/latest/${lecture.lectureId}`;
+            const params = {
+                lectureId : lecture.lectureId
+            }
+            const response = getJson(uri, params);
+
+            if(!response){
+                return;
+            }
+
+            $("#videoTitle").html(response.title);
+
+            //비디오 변경
+            var src = '/video/play/'+response.videoId;
+            $("#video").attr("src", src);
+
+        }
+
+        function deleteVideo(id){
+            if( !confirm('선택한 강의를 삭제 하시겠습니까?') ){
+                return false;
+            }
+
+            const uri = `/video/delete/${id}`;
+            callApi(uri, 'delete');
+            alert('삭제되었습니다.');
+            findAllVideo();
+        }
+
+        function goWritePage(){
+            const lectureId = [[ ${lecture.lectureId} ]];
+            location.href = `/lecture/write?lectureId=${lectureId}`;
+        }
+
+        function deleteLecture(){
+            const lectureId = [[ ${lecture.lectureId} ]];
+
+            if( !confirm('강의를 삭제 하시겠습니까?') ){
+                return false;
+            }
+
+            let inputHtml = '';
+
+            new URLSearchParams(location.search).forEach((value, key) => {
+                inputHtml += `<input type="hidden" name="${key}" value="${value}" />`;
+            })
+
+            const formHtml = `
+                <form id="deleteForm" action="/lecture/delete" method="post">
+                    ${inputHtml}
+                </form>
+            `;
+
+            const doc = new DOMParser().parseFromString(formHtml, 'text/html');
+            const form = doc.body.firstChild;
+            document.body.append(form);
+            document.getElementById('deleteForm').submit();
+        }
+
+    </script>
+</th:block>
+</html>

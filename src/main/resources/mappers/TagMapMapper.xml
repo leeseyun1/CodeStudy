@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seyun.CodeStudy.mapper.TagMapMapper">
+
+    <!--태그맵 생성-->
+    <insert id="createTagMap">
+        INSERT INTO tb_tagmap (
+            tag_id
+            , lecture_id
+        ) VALUES (
+            #{tagId}
+            , #{lectureId}
+        )
+    </insert>
+
+    <delete id="deleteTagMap">
+        DELETE FROM tb_tagmap
+        WHERE lecture_id = #{lectureId}
+    </delete>
+
+</mapper>

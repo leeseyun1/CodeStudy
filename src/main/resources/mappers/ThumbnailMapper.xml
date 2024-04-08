@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seyun.CodeStudy.mapper.ThumbnailMapper">
+    <insert id="create" parameterType="com.seyun.CodeStudy.model.lecture.Thumbnail">
+        INSERT INTO tb_thumbnail (
+            thumbnail_id
+            , lecture_id
+            , upload_path
+            , original_name
+            , save_name
+            , size
+            , is_deleted
+            , created_date
+            , deleted_date
+        ) VALUES (
+            #{thumbnailId}
+            , #{lectureId}
+            , #{uploadPath}
+            , #{originalName}
+            , #{saveName}
+            , #{size}
+            , 0
+            , NOW()
+            , NULL
+        )
+    </insert>
+
+    <delete id="deleteByThumbnailId" parameterType="long">
+        UPDATE
+            tb_thumbnail
+        SET
+            is_deleted = 1
+            , deleted_date = NOW()
+        WHERE
+            thumbnail_id = #{thumbnailId}
+    </delete>
+
+    <delete id="deleteByLectureId" parameterType="long">
+        UPDATE
+            tb_thumbnail
+        SET
+            is_deleted = 1
+            , deleted_date = NOW()
+        WHERE
+            lecture_id = #{lectureId}
+    </delete>
+</mapper>

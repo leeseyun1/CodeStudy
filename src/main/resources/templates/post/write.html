@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout/layout}">
+<th:block layout:fragment="title">
+    <title>CodeStudy</title>
+</th:block>
+<th:block layout:fragment="add-css">
+    <link rel="stylesheet" th:href="@{/css/post/write.css}">
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css">
+</th:block>
+<th:block layout:fragment="content">
+    <div class="content-top">
+        <h2>게시글 작성</h2>
+    </div>
+    <div class="content">
+        <form method="post" autocomplete="off" id="postWriteForm">
+            <input type="hidden" name="postId" th:if="${post != null}" th:value="${post.postId}"/>
+            <input type="hidden" name="writerName" th:value="${member.name}"/>
+            <input type="hidden" name="writerId" th:value="${member.id}"/>
+            <input type="hidden" name="content" id="content" />
+            <table>
+                <colgroup>
+                    <col style="width:15%;"><col style="width:35%"><col style="width:15%;"><col style="width:35%;">
+                </colgroup>
+                <tbody>
+                <tr>
+                    <th scope="row">작성자</th>
+                    <td><input type="text" id="writer" readonly th:value="${member.name + '(' + member.id + ')'}"></td>
+                    <th scope="row">등록일</th>
+                    <td><input type="text" id="createdDate" readonly></td>
+                </tr>
+                <tr>
+                    <th scope="row">제목</th>
+                    <td colspan="3"><input type="text" id="title" name="title"></td>
+                </tr>
+                <tr>
+                    <th colspan="4">내용</th>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        <div id="editor"></div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="button-set">
+                <button type="submit" onclick="writePost();" id="writeBtn" class="confirm-btn">등록</button>
+                <a href="javascript:history.back();" class="cancel-btn">취소하기</a>
+            </div>
+        </form>
+    </div>
+</th:block>
+<th:block layout:fragment="script">
+    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.10/dayjs.min.js" integrity="sha512-FwNWaxyfy2XlEINoSnZh1JQ5TRRtGow0D6XcmAWmYCRgvqOUTnzCxPc9uF35u5ZEpirk1uhlPVA19tflhvnW1g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+            window.onload = () => {
+                renderPostInfo();
+            }
+
+            var editor;
+
+            function renderPostInfo(){
+                const post = [[ ${post} ]];
+
+                if(!post){
+                    initCreatedDate();
+
+                    editor = new toastui.Editor({
+                        el: document.querySelector('#editor'),
+                        height: '500px',
+                        initialEditType: 'wysiwyg',
+                        initialValue: '',
+                        previewStyle: 'tap',
+                        placeholder: '내용을 입력해 주세요.',
+                    });
+                    return false;
+                }
+
+                editor = new toastui.Editor({
+                    el: document.querySelector('#editor'),
+                    height: '500px',
+                    initialEditType: 'wysiwyg',
+                    initialValue: post.content,
+                    previewStyle: 'tap',
+                    placeholder: '내용을 입력해 주세요.',
+                });
+
+                $('#createdDate').val(dayjs(post.createdDate).format('YYYY-MM-DD HH:mm'));
+                $('#title').val(post.title);
+                $('#writer').val(post.writerName+'('+post.writerId+')');
+
+            }
+
+            function initCreatedDate(){
+                document.getElementById('createdDate').value = dayjs().format('YYYY-MM-DD');
+            }
+
+            function writePost(){
+                const form = document.getElementById('postWriteForm');
+                form.action = [[ ${post == null} ]] ? '/post/save' : '/post/update';
+                form.content.value = editor.getHTML();
+                form.submit();
+            }
+
+            function goListPage(){
+                const queryString = new URLSearchParams(location.search);
+                queryString.delete('postId');
+                location.href = '/post/list' + '?' + queryString.toString();
+            }
+
+
+        /*]]>*/
+    </script>
+</th:block>
+</html>

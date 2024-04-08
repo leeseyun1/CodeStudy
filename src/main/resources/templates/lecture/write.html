@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<th:block layout:fragment="title">
+    <title>CodeStudy</title>
+</th:block>
+<th:block layout:fragment="add-css">
+    <link rel="stylesheet" th:href="@{/css/lecture/write.css}">
+</th:block>
+
+<th:block layout:fragment="content">
+    <div class="content-top">
+        <th:block th:if="${lecture != null}">
+            <h2>강의 수정</h2>
+        </th:block>
+        <th:block th:if="${lecture == null}">
+            <h2>강의 생성</h2>
+        </th:block>
+    </div>
+    <div class="content">
+        <form id="writeLectureForm" method="post" autocomplete="off" enctype="multipart/form-data">
+            <input type="hidden" name="writerId" th:value="${member.id}"/>
+            <input type="hidden" name="writerName" th:value="${member.name}"/>
+            <input type="hidden" name="lectureId" th:if="${lecture != null}" th:value="${lecture.lectureId}"/>
+            <input type="hidden" id="thumbnailModified" name="thumbnailModified" th:if="${lecture != null}" value="false"/>
+            <input type="hidden" id="thumbnailId" name="thumbnailId" th:if="${lecture != null}" th:value="${lecture.thumbnail.thumbnailId}"/>
+            <table>
+                <colgroup>
+                    <col style="width:12%;"/><col style="width:38%;"/><col style="width:50%;"/>
+                </colgroup>
+                <thead>
+                <tr>
+                    <th scope="col" colspan="2">강의 정보</th>
+                    <th scope="col">미리보기</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td style="height:12%" class="row-head">작성자</td>
+                    <td><input type="text" th:value="${member.name} + '(' + ${member.id} + ')'" readonly/></td>
+                    <td rowspan="5">
+                        <ul class="lecture-preview-box">
+                            <li class="lecture-preview">
+                                <div class="thumbnail-box" id="thumbnail-box">
+                                    <img src="../img/noimg.gif" id="prevImg">
+                                </div>
+                                <div class="lecture-info">
+                                    <div class="profile-box">
+                                        <img src="../img/default-profile.svg" id="profile">
+                                    </div>
+                                    <div class="user-info">
+                                        [[ ${member.name} ]]([[ ${member.id} ]])
+                                    </div>
+                                </div>
+                                <div id="lectureTitle" class="lecture-title">
+
+                                </div>
+                                <div class="tag-list" id="previewTagList">
+
+                                </div>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="height:12%" class="row-head">제목</td>
+                    <td><input type="text" onkeyup="keyupTitle(this.value);" name="title"/></td>
+                </tr>
+                <tr>
+                    <td class="row-head">소개글</td>
+                    <td><textarea name="intro"></textarea></td>
+                </tr>
+                <tr>
+                    <td style="height:30%" class="row-head">태그</td>
+                    <td class="custom-td">
+                        <input type="text" id="tagRegister" placeholder="스페이스바를 입력해 태그를 등록해 주세요."/>
+                        <div id="tagList">
+
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="height:12%" class="row-head">썸네일 등록</td>
+                    <td>
+                        <label>파일 선택
+                            <input type="file" name="multipartFile" accept="image/*" id="thumbnailInput" onchange="changeThumbnail(this)"/>
+                        </label>
+                        <input type="text" id="originalName" placeholder="사진을 선택해 주세요." readonly/>
+                        <a class="cancel-thumbnail" onclick="cancelThumbnail();">삭제</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="button-set">
+                <button onclick="writeLecture();" id="writeBtn" class="confirm-btn">등록하기</button>
+                <a href="javascript:history.back();" class="cancel-btn">취소하기</a>
+            </div>
+        </form>
+    </div>
+</th:block>
+<th:block layout:fragment="script">
+    <script th:src="@{/js/lecture/write.js}"></script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+
+            window.onload = () => {
+                renderLectureInfo();
+            }
+
+            function renderLectureInfo(){
+                const lecture = [[ ${lecture} ]];
+                const member = [[ ${member} ]];
+                if(member.profile.profileId != null){
+                    var path = `/upload/${member.profile.uploadPath}/${member.profile.saveName}`;
+                    $("#profile").attr("src", path);
+                }else{
+                    var path = `/img/default-profile.svg`;
+                    $("#profile").attr("src", path);
+                }
+                if( !lecture ){
+                    return false;
+                }
+                console.log(lecture);
+                if(lecture.writerId != member.id){
+                    $("#writeBtn").attr("disabled", true);
+                }
+
+                const form = document.getElementById('writeLectureForm');
+                const fields = ['title', 'intro'];
+
+                document.getElementById('lectureTitle').innerHTML = lecture.title;
+
+                fields.forEach(field => {
+                    form[field].value = lecture[field];
+                })
+
+
+                if(lecture.thumbnail != null && lecture.thumbnail.uploadPath != null){
+                    var path = `/upload/${lecture.thumbnail.uploadPath}/${lecture.thumbnail.saveName}`;
+                    document.getElementById('prevImg').src = path;
+                    document.getElementById('originalName').value = lecture.thumbnail.originalName;
+                }
+
+
+                lecture.tagList.forEach(tag => {
+                    $("#tagList").append('<a class="tag">'+tag.tagContent+'<span class="del-btn" idx="'+counter+'"><i class="fa-solid fa-x"></i></span></a>');
+                    $("#previewTagList").append('<a class="tag" id="prevTag'+counter+'">'+tag.tagContent+'</a>');
+                    $("#writeLectureForm").append('<input type="hidden" value="'+tag.tagContent+'" id="tag'+counter+'" name="tagContents">');
+                    addTag(tag.tagContent);
+                })
+            }
+
+            function writeLecture(){
+                const form = document.getElementById('writeLectureForm');
+                form.action = [[ ${lecture == null} ]] ? '/lecture/save' : '/lecture/update';
+                form.submit();
+            }
+
+        /*]]>*/
+    </script>
+</th:block>
+
+</html>

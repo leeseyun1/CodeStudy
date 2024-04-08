@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seyun.CodeStudy.mapper.PostMapper">
+
+    <insert id="create" parameterType="com.seyun.CodeStudy.model.post.Post" useGeneratedKeys="true" keyProperty="postId">
+        INSERT INTO tb_post (
+            post_id
+            , title
+            , content
+            , writer_id
+            , writer_name
+            , view_cnt
+            , is_deleted
+            , created_date
+            , modified_date
+        ) VALUES (
+            #{postId}
+            , #{title}
+            , #{content}
+            , #{writerId}
+            , #{writerName}
+            , 0
+            , 0
+            , NOW()
+            , NULL
+        )
+    </insert>
+
+    <select id="findAllPostId" resultType="long">
+        SELECT
+            post_id
+        FROM
+            tb_post
+        WHERE
+            is_deleted = 0
+    </select>
+
+    <select id="findByPostId" parameterType="long" resultMap="postMap">
+        SELECT
+            post_id, title, content, writer_id, writer_name, view_cnt, is_deleted, created_date, modified_date,
+            Pr.pr_upload_path, Pr.pr_save_name
+        FROM
+            tb_post P
+        LEFT JOIN (SELECT * FROM tb_profile WHERE pr_is_deleted = 0) Pr ON
+            P.writer_id = Pr.id
+        WHERE
+            post_id = #{postId}
+    </select>
+
+    <update id="update" parameterType="com.seyun.CodeStudy.model.post.Post">
+        UPDATE
+            tb_post
+        SET
+            modified_date = NOW()
+            , title = #{title}
+            , content = #{content}
+        WHERE
+            post_id = #{postId}
+    </update>
+
+    <delete id="deleteByPostId" parameterType="long">
+        UPDATE
+            tb_post
+        SET
+            is_deleted = 1
+        WHERE
+            post_id = #{postId}
+    </delete>
+
+    <select id="findAllPost" parameterType="com.seyun.CodeStudy.common.SearchDto" resultType="com.seyun.CodeStudy.model.post.Post">
+        SELECT
+            post_id
+            , title
+            , content
+            , writer_id
+            , writer_name
+            , view_cnt
+            , is_deleted
+            , created_date
+            , modified_date
+        FROM
+            tb_post
+        WHERE
+            is_deleted = 0
+            <include refid="search"/>
+        ORDER BY
+            post_id DESC
+        LIMIT #{pagination.limitStart}, #{recordSize}
+    </select>
+
+    <select id="count" parameterType="com.seyun.CodeStudy.common.SearchDto" resultType="int">
+        SELECT
+            COUNT(*)
+        FROM
+            tb_post
+        WHERE
+            is_deleted = 0
+        <include refid="search"/>
+    </select>
+
+    <sql id="search">
+        <if test="keyword != null and keyword != ''">
+            <choose>
+                <when test="searchType != null and searchType != ''">
+                    <choose>
+                        <when test="'title'.equals( searchType )">
+                            AND title LIKE CONCAT('%', #{keyword}, '%')
+                        </when>
+                        <when test="'content'.equals( searchType )">
+                            AND content LIKE CONCAT('%', #{keyword}, '%')
+                        </when>
+                        <when test="'writerId'.equals( searchType )">
+                            AND writer_id LIKE CONCAT('%', #{keyword}, '%')
+                        </when>
+                        <when test="'writerName'.equals( searchType )">
+                            AND writer_name LIKE CONCAT('%', #{keyword}, '%')
+                        </when>
+                    </choose>
+                </when>
+
+                <otherwise>
+                    AND (
+                            title LIKE CONCAT('%', #{keyword}, '%')
+                        OR  content LIKE CONCAT('%', #{keyword}, '%')
+                        OR  writer_name LIKE CONCAT('%', #{keyword}, '%')
+                        OR  writer_id LIKE CONCAT('%', #{keyword}, '%')
+                    )
+                </otherwise>
+            </choose>
+        </if>
+    </sql>
+
+    <update id="viewCntUp" parameterType="long">
+        UPDATE
+            tb_post
+        SET
+            view_cnt = view_cnt + 1
+        WHERE
+            post_id = #{postId}
+    </update>
+
+    <!-- postMap -->
+    <resultMap id="postMap" type="com.seyun.CodeStudy.model.post.Post">
+        <result property="postId" column="post_id"/>
+        <result property="writerId" column="writer_id"/>
+        <result property="writerName" column="writer_name"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="viewCnt" column="view_cnt"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="createdDate" column="created_date"/>
+        <result property="modifiedDate" column="modified_date"/>
+        <association property="profile" resultMap="profileMap"/>
+    </resultMap>
+
+    <!-- profileMap -->
+    <resultMap id="profileMap" type="com.seyun.CodeStudy.model.member.Profile">
+        <id property="profileId" column="profile_id"/>
+        <result property="profileId" column="profile_id"/>
+        <result property="id" column="id"/>
+        <result property="uploadPath" column="pr_upload_path"/>
+        <result property="saveName" column="pr_save_name"/>
+    </resultMap>
+
+</mapper>

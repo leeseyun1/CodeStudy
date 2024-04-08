@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seyun.CodeStudy.mapper.VideoMapper">
+    <insert id="create" parameterType="com.seyun.CodeStudy.model.lecture.Video">
+        INSERT INTO tb_video (
+            video_id
+            , lecture_id
+            , title
+            , upload_path
+            , original_name
+            , save_name
+            , size
+            , is_deleted
+            , created_date
+            , deleted_date
+        ) VALUES (
+            #{videoId}
+            , #{lectureId}
+            , #{title}
+            , #{uploadPath}
+            , #{originalName}
+            , #{saveName}
+            , #{size}
+            , 0
+            , NOW()
+            , NULL
+        )
+    </insert>
+
+    <delete id="deleteByVideoId" parameterType="long">
+        UPDATE
+            tb_video
+        SET
+            is_deleted = 1
+            , deleted_date = NOW()
+        WHERE
+            video_id = #{videoId}
+    </delete>
+
+    <delete id="deleteByLectureId" parameterType="long">
+        UPDATE
+            tb_video
+        SET
+            is_deleted = 1
+            , deleted_date = NOW()
+        WHERE
+            lecture_id = #{lectureId}
+    </delete>
+
+    <select id="findAllVideo" parameterType="com.seyun.CodeStudy.common.VideoSearchDto" resultType="com.seyun.CodeStudy.model.lecture.Video">
+        SELECT
+            *
+        FROM
+            tb_video
+        WHERE
+            is_deleted = 0 AND
+            lecture_id = #{lectureId}
+        ORDER BY
+            video_id DESC
+        LIMIT
+            #{pagination.limitStart}, #{recordSize}
+    </select>
+
+    <select id="count" parameterType="com.seyun.CodeStudy.common.VideoSearchDto" resultType="int">
+        SELECT
+            COUNT(*)
+        FROM
+            tb_video
+        WHERE
+            is_deleted = 0
+            AND lecture_id = #{lectureId}
+
+    </select>
+
+    <select id="findVideoByVideoId" parameterType="long" resultType="com.seyun.CodeStudy.model.lecture.Video">
+        SELECT
+            *
+        FROM
+            tb_video
+        WHERE
+            video_id = #{videoId}
+    </select>
+
+    <select id="findLatestVideo" parameterType="long" resultType="com.seyun.CodeStudy.model.lecture.Video">
+        SELECT
+            *
+        FROM
+            tb_video
+        WHERE
+            is_deleted = 0
+        AND
+            lecture_id = #{lectureId}
+        ORDER BY created_date DESC
+        LIMIT 1
+    </select>
+</mapper>

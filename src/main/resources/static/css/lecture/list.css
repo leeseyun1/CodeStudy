@@ -1,0 +1,172 @@
+
+.wrap > .content > .search-box {
+    background: #f7f8fa;
+    border:1px solid #cfcfcf;
+    box-shadow: 0 2px 0px rgba(80,80,80,0.03);
+    overflow:hidden;
+    padding : 10px 20px;
+}
+
+.search-group {
+    float :left;
+}
+
+.search-group > select {
+    width:auto;
+    border : 1px solid #ddd;
+    padding: 4px 5px;
+    height:35px;
+}
+
+.search-group > input {
+    width:200px;
+    border:1px solid #ddd;
+    height:31px;
+}
+
+.search-group > button {
+    width:43px;
+    background : #586a7d;
+    border : 1 solid #ddd;
+    color : #fff;
+    font-weight: bold;
+    line-height: 29px;
+    border-radius: 3px;
+}
+
+.search-order {
+    float:right;
+}
+.search-order > select {
+    width:auto;
+    border : 1px solid #ddd;
+    padding: 4px 5px;
+    height:35px;
+}
+
+ul.lecture-list {
+    width:100%;
+    margin-top:30px;
+    overflow:auto;
+}
+
+ul.lecture-list > li {
+    border-radius: 10px;
+    float:left;
+    width:32%;
+    margin:20px 2% 0 0;
+    height:auto;
+    background: #fefeff;
+    border: 1px solid #cfcfcf;
+    box-sizing: border-box;
+    overflow: hidden;
+    
+}
+
+ul.lecture-list > li:nth-child(3n){
+    margin:20px 0 0 0;
+}
+
+ul.lecture-list > li > .thumbnail-box {
+    aspect-ratio: 16/9;
+    width:100%;
+    overflow:hidden;
+    margin:0 auto;
+}
+
+ul.lecture-list > li > .thumbnail-box > img {
+    height:100%;
+    width:100%;
+    object-fit: cover;
+}
+
+.lecture-info {
+    padding:10px;
+    box-sizing: border-box;
+    display:flex;
+}
+
+.lecture-info > .profile-box {
+    border-radius: 100%;
+    overflow:hidden;
+    width:15%;
+    aspect-ratio: 1/1;
+    float:left;
+}
+
+.lecture-info > .profile-box > img{
+    height:100%;
+    width:100%;
+    object-fit: cover;
+}
+
+.lecture-info > .user-info {
+    margin-left:10px;
+    float:left;
+    font-size: 15px;
+    font-weight: 600;
+    width:85%;
+    display : flex;
+    align-items: center;
+    overflow:hidden;
+}
+
+.tag-list {
+    height:24px;
+    width:100%;
+    padding:0 10px 10px 10px;
+    overflow:hidden;
+}
+
+.tag-list > .tag {
+    float :left;
+    margin: 3px;
+    font-weight: 500;
+    background: #bdccdc;
+    border-radius: 4px;
+    padding:4px;
+}
+
+div.lecture-title {
+    display:flex;
+    padding:5px 10px;
+    font-weight:600;
+    font-size:18px;
+    height:44px;
+    word-break: break-all;
+    overflow:hidden;
+    box-sizing: border-box;
+}
+
+.paging * {box-sizing:border-box;}
+.paging {text-align:center; margin:2% 0 0;}
+.paging > p {display:inline-block; margin:0 4px;}
+.paging > p > a, .paging > p > span {margin-left:-1px;}
+.paging > p > a:first-child, .paging > p > span:first-child {margin-left:0;}
+.paging a, .paging span {display:inline-block; width:30px; height:30px; line-height:240%; color:#999; font-size:12px;}
+.paging a:hover {background:#f7f7f7;}
+.paging a.on, .paging span.on {background:#666; border-color:transparent; border-radius:4px; color:#fff;}
+.paging .page_bt {
+
+position:relative;}
+.paging .page_bt::after {background-position:-30px 0; width:6px; height:11px; position:absolute; top:50%; left:50%; margin:-5px 0 0 -3px;}
+.paging .first::after {background-position:-15px 0; width:12px; margin-left:-6px;}
+.paging .next::after {background-position:-40px 0;}
+.paging .last::after {background-position:-49px 0; width:12px; margin-left:-6px;}
+.paging .prev, .paging .last {margin-left:-1px;}
+
+div.button-set {
+    width:100%;
+    height:auto;
+    margin-top : 20px;
+    text-align: right;
+}
+
+div.button-set > button.goWriteLecture {
+    padding:7px;
+    font-size:16px;
+    font-weight: 500;
+    background:#78899b;
+    color:#fff;
+    border: 1px solid #525d67;
+}

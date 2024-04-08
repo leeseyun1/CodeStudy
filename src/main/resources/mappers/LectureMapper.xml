@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seyun.CodeStudy.mapper.LectureMapper">
+
+    <!-- 강의 개설 -->
+    <insert id="create" parameterType="com.seyun.CodeStudy.model.lecture.Lecture" useGeneratedKeys="true" keyProperty="lectureId">
+        INSERT INTO tb_lecture (
+            lecture_id
+            , writer_id
+            , writer_name
+            , title
+            , intro
+            , is_deleted
+            , view_cnt
+            , created_date
+            , modified_date
+            , upload_date
+        ) VALUES (
+            #{lectureId}
+            , #{writerId}
+            , #{writerName}
+            , #{title}
+            , #{intro}
+            , 0
+            , 0
+            , NOW()
+            , NULL
+            , NULL
+        )
+    </insert>
+
+    <!-- 강의리스트 조회(카드 형태) -->
+    <select id="findAllLecture" resultMap="lectureMap">
+        SELECT
+            L.lecture_id, L.writer_id, L.writer_name, L.title, L.view_cnt, L.created_date, L.upload_date,
+            T.tag_content,
+            TH.upload_path, TH.original_name, TH.save_name, TH.size,
+            P.pr_upload_path, P.pr_save_name
+        FROM (
+            SELECT * FROM tb_lecture
+            WHERE is_deleted = 0
+            <include refid="search"/>
+            <include refid="order"/>
+            LIMIT #{pagination.limitStart}, #{recordSize}
+        ) L LEFT JOIN tb_tagmap M ON
+            M.lecture_id = L.lecture_id
+        LEFT JOIN tb_tag T ON
+            T.tag_id = M.tag_id
+        LEFT JOIN (select * from tb_thumbnail where is_deleted = 0) TH ON
+            TH.lecture_id = L.lecture_id
+        LEFT JOIN (select * from tb_profile where pr_is_deleted = 0) P ON
+            P.id = L.writer_id;
+    </select>
+
+    <!-- 수 카운트 -->
+    <select id="count" parameterType="com.seyun.CodeStudy.common.SearchDto" resultType="int">
+        SELECT COUNT(*) FROM tb_lecture
+        WHERE is_deleted = 0
+        <include refid="search"/>
+    </select>
+
+    <!-- 강의 조회 -->
+    <select id="findByLectureId" resultMap="lectureMap" parameterType="long">
+        SELECT
+            L.lecture_id, L.writer_id, L.writer_name, L.title, L.intro, L.is_deleted, L.view_cnt, L.created_date, L.modified_date, L.upload_date,
+            T.tag_content,
+            TH.upload_path, TH.save_name, TH.original_name, TH.thumbnail_id,
+            P.pr_upload_path, P.pr_save_name
+        FROM (
+            SELECT * FROM tb_lecture
+            WHERE lecture_id = #{lectureId}
+        ) L LEFT JOIN tb_tagmap M ON
+            L.lecture_id = M.lecture_id
+        LEFT JOIN tb_tag T ON
+            T.tag_id = M.tag_id
+        LEFT JOIN (select * from tb_thumbnail where is_deleted = 0) TH ON
+            TH.lecture_id = L.lecture_id
+        LEFT JOIN (select * from tb_profile where pr_is_deleted = 0) P ON
+            P.id = L.writer_id
+        ORDER BY M.map_id ASC;
+    </select>
+
+    <!-- 강의 수정 -->
+    <update id="update" parameterType="com.seyun.CodeStudy.model.lecture.Lecture">
+        UPDATE
+            tb_lecture
+        SET
+            modified_date = NOW()
+            , title = #{title}
+            , intro = #{intro}
+            , writer_id = #{writerId}
+
+        WHERE
+            lecture_id = #{lectureId}
+    </update>
+
+    <!-- 조회수 증가 -->
+    <update id="viewCntUp" parameterType="long">
+        UPDATE
+            tb_lecture
+        SET
+            view_cnt = view_cnt + 1
+        WHERE
+            lecture_id = #{lectureId}
+    </update>
+
+    <!-- 최근 업로드 날짜 기록 -->
+    <update id="updateUploadDate" parameterType="long">
+        UPDATE
+            tb_lecture
+        SET
+            upload_date = (
+                SELECT created_date FROM tb_video
+                WHERE is_deleted = 0 AND lecture_id = #{lectureId}
+                ORDER BY created_date DESC limit 1
+            )
+        WHERE
+            lecture_id = #{lectureId};
+    </update>
+
+    <!-- 강의 삭제 -->
+    <delete id="deleteByLectureId" parameterType="long">
+        UPDATE
+            tb_lecture
+        SET
+            is_deleted = 1
+        WHERE
+            lecture_id = #{lectureId}
+    </delete>
+
+    <!-- search -->
+    <sql id="search">
+        <if test="keyword != null and keyword != ''">
+            <choose>
+                <when test="searchType != null and searchType != ''">
+                    <choose>
+                        <when test="'writerId'.equals( searchType )">
+                            AND writer_id LIKE CONCAT('%', #{keyword}, '%')
+                        </when>
+                        <when test="'title'.equals( searchType )">
+                            AND title LIKE CONCAT('%', #{keyword}, '%')
+                        </when>
+                        <when test="'writerName'.equals( searchType )">
+                            AND writer_name LIKE CONCAT('%', #{keyword}, '%')
+                        </when>
+                        <when test="'tagContent'.equals( searchType )">
+                            AND lecture_id IN (
+                                SELECT lecture_id FROM tb_tagmap WHERE tag_id IN (
+                                    SELECT tag_id FROM tb_tag WHERE
+                                    tag_content LIKE CONCAT('%', #{keyword}, '%')
+                                )
+                            )
+                        </when>
+                    </choose>
+                </when>
+
+                <otherwise>
+                    AND (
+                            writer_id LIKE CONCAT('%', #{keyword}, '%')
+                        OR  writer_name LIKE CONCAT('%', #{keyword}, '%')
+                        OR  title LIKE CONCAT('%', #{keyword}, '%')
+                        OR  lecture_id IN (
+                            SELECT lecture_id FROM tb_tagmap WHERE tag_id IN (
+                                SELECT tag_id FROM tb_tag WHERE
+                                tag_content LIKE CONCAT('%', #{keyword}, '%')
+                            )
+                        )
+                    )
+                </otherwise>
+            </choose>
+        </if>
+    </sql>
+
+    <!-- order -->
+    <sql id="order">
+        <choose>
+            <when test="'lectureId'.equals( order )">
+                ORDER BY lecture_id DESC
+            </when>
+            <when test="'viewCnt'.equals( order )">
+                ORDER BY view_cnt DESC
+            </when>
+            <when test="'uploadDate'.equals( order )">
+                ORDER BY upload_date DESC
+            </when>
+            <otherwise>
+                ORDER BY lecture_id DESC
+            </otherwise>
+        </choose>
+    </sql>
+
+    <!-- lectureMap -->
+    <resultMap id="lectureMap" type="com.seyun.CodeStudy.model.lecture.Lecture">
+        <result property="lectureId" column="lecture_id"/>
+        <result property="writerId" column="writer_id"/>
+        <result property="writerName" column="writer_name"/>
+        <result property="title" column="title"/>
+        <result property="intro" column="intro"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="viewCnt" column="view_cnt"/>
+        <result property="createdDate" column="created_date"/>
+        <result property="modifiedDate" column="modified_date"/>
+        <result property="uploadDate" column="upload_date"/>
+        <association property="profile" resultMap="profileMap"/>
+        <association property="thumbnail" resultMap="thumbnailMap"/>
+        <collection property="tagList" resultMap="tagMap"/>
+    </resultMap>
+
+    <!-- tagMap -->
+    <resultMap id="tagMap" type="com.seyun.CodeStudy.model.lecture.Tag">
+        <result property="tagId" column="tag_id"/>
+        <result property="tagContent" column="tag_content"/>
+        <result property="tagCount" column="tag_count"/>
+    </resultMap>
+
+    <!-- thumbnailMap -->
+    <resultMap id="thumbnailMap" type="com.seyun.CodeStudy.model.lecture.Thumbnail">
+        <id property="thumbnailId" column="thumbnail_id"/>
+        <result property="lectureId" column="lecture_id"/>
+        <result property="uploadPath" column="upload_path"/>
+        <result property="originalName" column="original_name"/>
+        <result property="saveName" column="save_name"/>
+        <result property="size" column="size"/>
+        <result property="isDeleted" column="is_deleted"/>
+    </resultMap>
+
+    <!-- profileMap -->
+    <resultMap id="profileMap" type="com.seyun.CodeStudy.model.member.Profile">
+        <id property="profileId" column="profile_id"/>
+        <result property="profileId" column="profile_id"/>
+        <result property="id" column="id"/>
+        <result property="uploadPath" column="pr_upload_path"/>
+        <result property="saveName" column="pr_save_name"/>
+    </resultMap>
+</mapper>

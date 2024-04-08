@@ -1,0 +1,232 @@
+
+.content > video {
+    width:100%;
+    aspect-ratio: 16/9;
+}
+
+.content > .info {
+    padding:20px;
+    box-sizing: border-box;
+    display:flex;
+    background: #f7f8fa;
+    border:1px solid #cfcfcf;
+    box-shadow: 0 2px 0px rgba(80,80,80,0.03);
+}
+
+.content > .info > .writer-info {
+    float:left;
+}
+
+.content > .info > .writer-info > .writer {
+    margin-top:7px;
+    text-align: center;
+    font-weight: 600;
+    font-size:18px;
+}
+
+.content > .info > .writer-info > .profile-box {
+    border-radius: 100%;
+    border:2px solid rgb(130, 186, 198);
+    overflow:hidden;
+    width:80px;
+    aspect-ratio: 1/1;
+}
+
+.content > .info > .writer-info > .profile-box > img {
+    height:100%;
+    width:100%;
+    object-fit: cover;
+}
+
+.content > .info > .titles {
+    margin-left : 30px;
+}
+
+.content > .info > .titles > .lecture-title {
+    font-size: 24px;
+    font-weight: 600;
+    height:40%;
+    color: rgb(109, 109, 109);
+    display: flex;
+    align-items: center;
+}
+
+.content > .info > .titles > .lecture-post-title{
+    font-size: 18px;
+    font-weight: 600;
+    height:30%;
+    display: flex;
+    align-items: center;
+}
+
+.lecture-tag-list {
+    height:30%;
+    width:100%;
+    overflow:hidden;
+}
+
+.lecture-tag-list > .tag {
+    float :left;
+    margin: 3px;
+    font-weight: 500;
+    background: #bdccdc;
+    border-radius: 4px;
+    padding:4px;
+}
+
+.content > .info > .titles > .lecture-post-title{
+    height:20%;
+    display: flex;
+    align-items: center;
+}
+
+
+#modalOpenBtn, #modalCloseBtn {
+    cursor: pointer;
+}
+
+#modalCloseBtn {
+    float:right;
+}
+
+#registerBtn {
+    float:right;
+}
+
+#modalContainer {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+#modalContent {
+    position: absolute;
+    background-color: #ffffff;
+    width: 800px;
+    height: auto;
+
+}
+
+#modalContent > .modalHeader {
+    border-bottom:1px solid #cccccc;
+    padding:15px;
+    font-weight: 600;
+    font-size:18px;
+}
+
+#modalContent > .modalBody {
+    padding:15px;
+}
+
+#modalContent > .modalFooter {
+    border-top:1px solid #cccccc;
+    padding:15px;
+}
+
+#modalContainer.hidden {
+    display: none;
+}
+
+.modalBody > table {
+    width:100%;
+}
+
+.modalBody > table > tbody > tr > th {
+    background: #7a7b9e;
+    font-weight: 600;
+    font-size: 18px;
+    color: #f7f8fa;
+    padding:12px;
+}
+
+.modalBody > table > tbody > tr > th , .modalBody > table > tbody > tr > td {
+    box-sizing: border-box;
+    border : 1px solid #cccccc;
+}
+
+input[type="text"] {
+    width:100%;
+    height:40px;
+    border-radius:0;
+    outline:none;
+    border: solid 1px #ddd;
+    box-sizing: border-box;
+}
+
+input[type="file"] {
+    margin-left:12px;
+}
+
+
+.paging * {box-sizing:border-box;}
+.paging {text-align:center; margin:2% 0 0;}
+.paging > p {display:inline-block; margin:0 4px;}
+.paging > p > a, .paging > p > span {margin-left:-1px;}
+.paging > p > a:first-child, .paging > p > span:first-child {margin-left:0;}
+.paging a, .paging span {display:inline-block; width:30px; height:30px; line-height:240%; color:#999; font-size:12px;}
+.paging a:hover {background:#f7f7f7;}
+.paging a.on, .paging span.on {background:#666; border-color:transparent; border-radius:4px; color:#fff;}
+.paging .page_bt {
+
+position:relative;}
+.paging .page_bt::after {background-position:-30px 0; width:6px; height:11px; position:absolute; top:50%; left:50%; margin:-5px 0 0 -3px;}
+.paging .first::after {background-position:-15px 0; width:12px; margin-left:-6px;}
+.paging .next::after {background-position:-40px 0;}
+.paging .last::after {background-position:-49px 0; width:12px; margin-left:-6px;}
+.paging .prev, .paging .last {margin-left:-1px;}
+
+
+.lecture-list {
+
+}
+
+.lecture-list > .lecture {
+    width:100%;
+    padding:15px;
+    box-sizing: border-box;
+    border:1px solid #000;
+    overflow:auto;
+}
+
+.lecture-list > .lecture > .lecture-top {
+    overflow:auto;
+}
+
+.lecture-list > .lecture > .lecture-top > .lecture-top-right{
+    float:right;
+}
+
+.lecture-list > .lecture > .lecture-top > .lecture-top-right > p {
+    margin-right:15px;
+    font-weight: 600;
+    color:#cfcfcf;
+    float:left;
+}
+
+.lecture-list > .lecture > .lecture-top > .lecture-top-right > .button {
+    float:left;
+}
+
+.lecture-list > .lecture > .lecture-body {
+    font-size:20px;
+    font-weight:600;
+}
+
+div.button-set {
+    width:100%;
+    height:auto;
+    margin-top : 20px;
+    text-align: right;
+}
+
+div.button-set > button {
+    padding:7px;
+    font-size:16px;
+    font-weight: 500;
+}

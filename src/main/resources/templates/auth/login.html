@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<th:block layout:fragment="title">
+    <title>CodeStudy</title>
+</th:block>
+<th:block layout:fragment="add-css">
+    <link rel="stylesheet" th:href="@{/css/auth/login.css}">
+</th:block>
+
+<th:block layout:fragment="content">
+    <div class="content-top">
+        <h2>로그인</h2>
+    </div>
+    <div class="content">
+        <form id="loginForm" method="post" action="/login" autocomplete="off">
+            <input type="text" name="id" placeholder="아이디"/>
+            <input type="password" name="password" placeholder="비밀번호"/>
+            <button type="submit">로그인</button>
+            <button type="button" th:onclick="|location.href='@{/auth/signup}'|">회원가입</button>
+        </form>
+    </div>
+</th:block>
+
+<th:block layout:fragment="script">
+    <script th:src="@{/js/function.js}"></script>
+    <script th:inline="javascript">
+
+    </script>
+</th:block>
+</html>

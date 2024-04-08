@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<th:block layout:fragment="title">
+    <title>CodeStudy</title>
+</th:block>
+<th:block layout:fragment="add-css">
+    <link rel="stylesheet" th:href="@{/css/auth/signup.css}">
+</th:block>
+
+<th:block layout:fragment="content">
+    <div class="content-top">
+        <h2>회원가입</h2>
+    </div>
+    <div class="content">
+        <form id="signupForm" method="post" action="/member/create" autocomplete="off" enctype="multipart/form-data">
+            <table>
+                <colgroup>
+                    <col style="width:15%;"/><col style="width:35%;"/><col style="width:50%;"/>
+                </colgroup>
+                <thead>
+                <tr>
+                    <th scope="col" colspan="2">회원 정보</th>
+                    <th scope="col">프로필 사진</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td class="row-head">이름</td>
+                    <td><input type="text" name="name" id="name"/></td>
+                    <td class="prevBox" rowspan="7">
+                        <div class="profileBox">
+                            <img id="prevProfile" src="/img/default-profile.svg">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="row-head">성별</td>
+                    <td>
+                        남<input type="radio" id="genderM" name="gender" value="M"/>
+                        여<input type="radio" id="genderF" name="gender" value="F"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="row-head">생년월일</td>
+                    <td><input type="date" id="birthday" name="birthday"></td>
+                </tr>
+                <tr>
+                    <td class="row-head">아이디</td>
+                    <td><input type="text" id="id" name="id"/></td>
+                </tr>
+                <tr>
+                    <td class="row-head">비밀번호</td>
+                    <td><input type="password" id="password" name="password" onkeyup="confirmPw();"></td>
+                </tr>
+                <tr>
+                    <td class="row-head">비밀번호 확인</td>
+                    <td><input type="password" id="passwordConfirm" onkeyup="confirmPw();"></td>
+                </tr>
+                <tr>
+                    <td style="height:12%" class="row-head">프로필 등록</td>
+                    <td>
+                        <label>파일 선택
+                            <input type="file" id="profileInput" onchange="changeProfile(this);" name="multipartFile" accept="image/*"/>
+                        </label>
+                        <input type="text" id="originalName" placeholder="사진을 선택해 주세요." readonly/>
+                        <a onclick="cancelProfile();" id="profileCancel">삭제</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="button-set">
+                <button type="submit" id="signupBtn" class="confirm-btn" disabled>회원가입</button>
+                <a href="javascript:history.back();" class="cancel-btn">취소하기</a>
+            </div>
+        </form>
+    </div>
+</th:block>
+
+<th:block layout:fragment="script">
+    <script th:src="@{/js/function.js}"></script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+            //비번 일치 확인
+            function confirmPw(){
+                if($("#passwordConfirm").val() == $("#password").val()){
+                    $("#signupBtn").attr("disabled", false);
+                }else{
+                    $("#signupBtn").attr("disabled", true);
+                }
+            }
+
+            //이미지 변경
+            function changeProfile(file){
+                var reg = /(.*?)\.(jpg|jpeg|png|gif|bmp)$/;
+
+                console.log(file.files[0].name);
+                if(file.value == null){
+                    document.getElementById('prevProfile').src = "/img/default-profile.svg";
+                } else if(file.value.match(reg)) {
+                    console.log("해당 파일은 이미지 파일입니다.");
+                    prevProfile(file);
+                    $('#profileModified').val(true);
+                } else {
+                    console.log("해당 파일은 이미지 파일이 아닙니다.");
+                }
+            }
+
+            function prevProfile(file){
+                if(file.files && file.files[0]){
+                    var reader = new FileReader();
+                    reader.onload = function(e){
+                        document.getElementById('prevProfile').src = e.target.result;
+                    };
+                    reader.readAsDataURL(file.files[0]);
+                    $('#originalName').val(file.files[0].name);
+                }
+            }
+
+            function cancelProfile(){
+                $('#profileInput').val('');
+                $('#originalName').val('');
+                $('#profileModified').val(true);
+                document.getElementById('prevProfile').src = "/img/default-profile.svg";
+            }
+        /*]]>*/
+    </script>
+</th:block>
+</html>

@@ -1,0 +1,97 @@
+.wrap > .content > .search-box {
+    background: #f7f8fa;
+    border:1px solid #cfcfcf;
+    box-shadow: 0 2px 0px rgba(80,80,80,0.03);
+    overflow:hidden;
+    padding : 10px 20px;
+}
+
+.search-group {
+    float :left;
+}
+
+.search-group > select {
+    width:auto;
+    border : 1px solid #ddd;
+    padding: 4px 5px;
+    height:35px;
+
+}
+
+.search-group > input {
+    width:200px;
+    border:1px solid #ddd;
+    height:31px;
+}
+
+.search-group > button {
+    width:43px;
+    background : #586a7d;
+    border : 1 solid #ddd;
+    color : #fff;
+    font-weight: bold;
+    line-height: 29px;
+    border-radius: 3px;
+}
+
+.content > table {
+    width:100%;
+    margin-top:50px;
+}
+
+.content > table > thead > tr > th, .content > table > tbody > tr > td{
+    border:0.5px solid #b0b0b0;
+}
+
+thead > tr > th {
+    background:#6f8294;
+    color:#fff;
+    font-weight: 600;
+    font-size: 15px;
+    height:55px;
+    box-sizing: border-box;
+}
+
+
+tbody > tr > td {
+    padding:14px;
+    background: #f9f9f9;
+
+    box-sizing:border-box;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+div.button-set {
+    width:100%;
+    height:auto;
+    margin-top : 20px;
+    text-align: right;
+}
+
+div.button-set > button.goWritePost {
+    padding:7px;
+    font-size:16px;
+    font-weight: 500;
+    background:#78899b;
+    color:#fff;
+    border: 1px solid #525d67;
+}
+
+
+.paging * {box-sizing:border-box;}
+.paging {text-align:center; margin:2% 0 0;}
+.paging > p {display:inline-block; margin:0 4px;}
+.paging > p > a, .paging > p > span {margin-left:-1px;}
+.paging > p > a:first-child, .paging > p > span:first-child {margin-left:0;}
+.paging a, .paging span {display:inline-block; width:30px; height:30px; line-height:240%; color:#999; font-size:12px;}
+.paging a:hover {background:#f7f7f7;}
+.paging a.on, .paging span.on {background:#666; border-color:transparent; border-radius:4px; color:#fff;}
+.paging .page_bt {
+
+position:relative;}
+.paging .page_bt::after {background-position:-30px 0; width:6px; height:11px; position:absolute; top:50%; left:50%; margin:-5px 0 0 -3px;}
+.paging .first::after {background-position:-15px 0; width:12px; margin-left:-6px;}
+.paging .next::after {background-position:-40px 0;}
+.paging .last::after {background-position:-49px 0; width:12px; margin-left:-6px;}
+.paging .prev, .paging .last {margin-left:-1px;}

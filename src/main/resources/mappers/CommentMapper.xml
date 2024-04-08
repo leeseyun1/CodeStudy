@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seyun.CodeStudy.mapper.CommentMapper">
+
+    <insert id="create" parameterType="com.seyun.CodeStudy.model.post.Comment" useGeneratedKeys="true" keyProperty="commentId">
+        INSERT INTO tb_comment(
+            comment_id
+            , post_id
+            , writer_id
+            , writer_name
+            , content
+            , is_deleted
+            , created_date
+            , modified_date
+        ) VALUES (
+            #{commentId}
+            , #{postId}
+            , #{writerId}
+            , #{writerName}
+            , #{content}
+            , 0
+            , NOW()
+            , NULL
+        )
+    </insert>
+
+    <select id="findByCommentId" parameterType="long" resultType="com.seyun.CodeStudy.model.post.Comment">
+        SELECT
+            *
+        FROM
+            tb_comment
+        WHERE
+            comment_id = #{commentId}
+    </select>
+
+    <update id="update" parameterType="com.seyun.CodeStudy.model.post.Comment">
+        UPDATE
+            tb_comment
+        SET
+            modified_date = NOW()
+            , content = #{content}
+            , writer_id = #{writerId}
+        WHERE
+            comment_id = #{commentId}
+    </update>
+
+    <delete id="deleteByCommentId" parameterType="long">
+        UPDATE
+            tb_comment
+        SET
+            is_deleted = 1
+        WHERE
+            comment_id = #{commentId}
+    </delete>
+
+    <select id="findAllComment" parameterType="com.seyun.CodeStudy.common.CommentSearchDto" resultMap="commentMap">
+        SELECT
+            C.comment_id, C.post_id, C.writer_id, C.writer_name, C.content, C.is_deleted, C.created_date, C.modified_date,
+            P.pr_upload_path, P.pr_save_name
+        FROM (
+            SELECT * FROM tb_comment
+            WHERE is_deleted = 0 AND post_id = #{postId}
+            ORDER BY comment_id DESC
+            LIMIT #{pagination.limitStart}, #{recordSize}
+        ) C LEFT JOIN (SELECT * FROM tb_profile WHERE pr_is_deleted = 0) P ON
+            P.id = C.writer_id;
+
+    </select>
+
+    <select id="count" parameterType="com.seyun.CodeStudy.common.CommentSearchDto" resultType="int">
+        SELECT
+            COUNT(*)
+        FROM
+            tb_comment
+        WHERE
+            is_deleted = 0
+            AND post_id = #{postId}
+    </select>
+
+    <!-- commentMap -->
+    <resultMap id="commentMap" type="com.seyun.CodeStudy.model.post.Comment">
+        <result property="commentId" column="comment_id"/>
+        <result property="postId" column="post_id"/>
+        <result property="writerId" column="writer_id"/>
+        <result property="writerName" column="writer_name"/>
+        <result property="content" column="content"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="createdDate" column="created_date"/>
+        <result property="modifiedDate" column="modified_date"/>
+        <association property="profile" resultMap="profileMap"/>
+    </resultMap>
+
+    <!-- profileMap -->
+    <resultMap id="profileMap" type="com.seyun.CodeStudy.model.member.Profile">
+        <id property="profileId" column="profile_id"/>
+        <result property="profileId" column="profile_id"/>
+        <result property="id" column="id"/>
+        <result property="uploadPath" column="pr_upload_path"/>
+        <result property="saveName" column="pr_save_name"/>
+    </resultMap>
+</mapper>
